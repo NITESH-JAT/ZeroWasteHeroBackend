@@ -5,14 +5,22 @@ import { successResponse, errorResponse } from '../../utils/apiResponse';
 export const register = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { firstName, lastName, email, password, role } = req.body;
+    
+    // Grab the raw image data from memory!
+    const govIdBuffer = req.file?.buffer;
 
     // SECURITY LOCKDOWN: Define exactly which roles can be created publicly
-    const allowedPublicRoles = ['CITIZEN', 'NGO', 'WORKER', 'CHAMPION', 'ADMIN'];
+    const allowedPublicRoles = ['CITIZEN', 'NGO', 'WORKER', 'CHAMPION', 'ADMIN', 'SCRAPPER'];
     
-    // If they try to pass 'ADMIN', 'CHAMPION', or garbage text, we force them to be a CITIZEN
+    // If they try to pass garbage text, we force them to be a CITIZEN
     let safeRole = 'CITIZEN';
     if (role && allowedPublicRoles.includes(role.toUpperCase())) {
       safeRole = role.toUpperCase();
+    }
+
+    // Check if the validated role is a Scrapper and ensure they attached a Buffer
+    if (safeRole === 'SCRAPPER' && !govIdBuffer) {
+      return errorResponse(res, 400, 'Government ID image is required for Scrap Collectors');
     }
 
     const result = await authService.registerUser({ 
@@ -20,7 +28,8 @@ export const register = async (req: Request, res: Response, next: NextFunction) 
       lastName, 
       email, 
       password, 
-      role: safeRole 
+      role: safeRole,
+      govIdBuffer
     });
     
     return successResponse(res, 201, 'User registered successfully', result);

@@ -11,6 +11,7 @@ build/
 .env.production
 test-lifecycle.html
 test-upload.html
+test-scrapper.html
 
 
 # System Files

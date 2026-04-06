@@ -1,7 +1,8 @@
 import bcrypt from 'bcryptjs';
-import jwt, { SignOptions } from 'jsonwebtoken'; // <-- Added SignOptions here
+import jwt, { SignOptions } from 'jsonwebtoken';
 import * as authRepo from './authRepository';
 import { JwtPayload } from './authTypes';
+import { uploadBufferToCloudinary } from '../../utils/cloudinaryHelper';
 
 export const registerUser = async (data: any) => {
   // 1. Check if user already exists
@@ -14,16 +15,25 @@ export const registerUser = async (data: any) => {
   const salt = await bcrypt.genSalt(10);
   const passwordHash = await bcrypt.hash(data.password, salt);
 
-  // 3. Save to database
+  // 3. Upload the Gov ID if they are a Scrapper!
+  let govIdUrl: string | undefined = undefined;
+  
+  if (data.role === 'SCRAPPER' && data.govIdBuffer) {
+    // We use your custom helper to upload to a specific folder
+    govIdUrl = await uploadBufferToCloudinary(data.govIdBuffer, 'zero-waste-govid');
+  }
+
+  // 4. Save to database
   const newUser = await authRepo.createUser({
     firstName: data.firstName,
     lastName: data.lastName,
     email: data.email,
     passwordHash,
-    role: data.role
+    role: data.role,
+    govIdUrl // This is now the live Cloudinary URL (or undefined for Citizens)
   });
 
-  // 4. Generate JWT
+  // 5. Generate JWT
   const token = generateToken({ userId: newUser.id, role: newUser.role });
 
   return { user: newUser, token };

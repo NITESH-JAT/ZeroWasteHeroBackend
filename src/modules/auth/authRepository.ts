@@ -11,20 +11,29 @@ export const findUserByEmail = async (email: string): Promise<UserRecord | null>
   return result.rows.length ? result.rows[0] : null;
 };
 
-export const createUser = async (userData: RegisterData): Promise<UserRecord> => {
+export const createUser = async (data: {
+  firstName: string;
+  lastName: string;
+  email: string;
+  passwordHash: string;
+  role: string;
+  govIdUrl?: string;
+}) => {
   const sql = `
-    INSERT INTO users (first_name, last_name, email, password_hash, role)
-    VALUES ($1, $2, $3, $4, $5)
-    RETURNING id, first_name AS "firstName", last_name AS "lastName", email, role, green_points AS "greenPoints"
+    INSERT INTO users (first_name, last_name, email, password_hash, role, gov_id_url)
+    VALUES ($1, $2, $3, $4, $5, $6)
+    RETURNING id, first_name AS "firstName", last_name AS "lastName", email, role, green_points AS "greenPoints", gov_id_url AS "govIdUrl"
   `;
-  const values = [
-    userData.firstName, 
-    userData.lastName, 
-    userData.email, 
-    userData.passwordHash, 
-    userData.role || 'CITIZEN'
-  ];
   
-  const result = await query(sql, values);
+  // Extract the values from the 'data' object
+  const result = await query(sql, [
+    data.firstName, 
+    data.lastName, 
+    data.email, 
+    data.passwordHash, 
+    data.role, 
+    data.govIdUrl || null
+  ]);
+  
   return result.rows[0];
 };

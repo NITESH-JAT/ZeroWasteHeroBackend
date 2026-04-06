@@ -77,3 +77,30 @@ CREATE TABLE IF NOT EXISTS rewards_history (
     reason VARCHAR(255) NOT NULL,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
+
+-- 6. Scrap Listings Table (For citizens to list scrap for collection)
+CREATE TABLE scrap_listings (
+    id SERIAL PRIMARY KEY,
+    citizen_id UUID REFERENCES users(id) ON DELETE CASCADE,
+    title VARCHAR(255) NOT NULL,
+    description TEXT,
+    image_url VARCHAR(255) NOT NULL,
+    status VARCHAR(50) DEFAULT 'OPEN', 
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 7. Scrap Bids Table (For workers to bid on scrap collection tasks)
+CREATE TABLE scrap_bids (
+    id SERIAL PRIMARY KEY,
+    listing_id INTEGER REFERENCES scrap_listings(id) ON DELETE CASCADE,
+    scrapper_id UUID REFERENCES users(id) ON DELETE CASCADE,
+    amount DECIMAL(10,2) NOT NULL,
+    proposed_time VARCHAR(255) NOT NULL,
+    status VARCHAR(50) DEFAULT 'PENDING', 
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- ==========================================
+ALTER TABLE users ADD COLUMN gov_id_url VARCHAR(255);
+ALTER TYPE user_role ADD VALUE 'SCRAPPER';
+ALTER TABLE scrap_listings ADD COLUMN city VARCHAR(100) NOT NULL DEFAULT 'Unknown';

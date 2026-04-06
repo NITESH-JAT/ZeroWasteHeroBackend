@@ -5,7 +5,7 @@ export const registerSchema = z.object({
   lastName: z.string().min(2, 'Last name must be at least 2 characters'),
   email: z.string().email('Please provide a valid email address'),
   password: z.string().min(6, 'Password must be at least 6 characters long'),
-  role: z.enum(['CITIZEN', 'NGO', 'WORKER', 'CHAMPION']).optional()
+  role: z.enum(['CITIZEN', 'NGO', 'WORKER', 'CHAMPION', 'ADMIN', 'SCRAPPER']).optional()
 });
 
 export const loginSchema = z.object({
