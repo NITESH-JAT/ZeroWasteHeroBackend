@@ -8,6 +8,7 @@ const router = Router();
 
 // CITIZEN ROUTES
 router.post('/listings', requireAuth, requireRole(['CITIZEN']), upload.single('image'), scrapController.createListing);
+router.get('/my-listings', requireAuth, scrapController.getMyListings);
 router.get('/listings/:id/bids', requireAuth, requireRole(['CITIZEN']), scrapController.getBids);
 router.patch('/bids/:bidId/accept', requireAuth, requireRole(['CITIZEN']), scrapController.acceptBid);
 

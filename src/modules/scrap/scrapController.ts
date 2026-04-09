@@ -93,3 +93,19 @@ export const acceptBid = async (req: AuthRequest, res: Response, next: NextFunct
     next(error);
   }
 };
+
+export const getMyListings = async (req: AuthRequest, res: Response, next: NextFunction) => {
+  try {
+    const citizenId = req.user?.userId;
+    if (!citizenId) {
+      return errorResponse(res, 401, 'Unauthorized');
+    }
+
+    // Call the repo directly (or via your scrapService if you prefer strict layering)
+    const listings = await scrapRepo.getMyListingsWithBids(citizenId);
+    
+    return successResponse(res, 200, 'My listings fetched successfully', listings);
+  } catch (error) {
+    next(error);
+  }
+};

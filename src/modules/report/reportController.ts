@@ -2,6 +2,7 @@ import { Response, NextFunction } from 'express';
 import * as reportService from './reportService';
 import { successResponse, errorResponse } from '../../utils/apiResponse';
 import { AuthRequest } from '../../types/globalTypes'; // <-- Import our custom type
+import * as reportRepo from './reportRepository';
 
 export const createReport = async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
@@ -58,6 +59,22 @@ export const verifyReport = async (req: AuthRequest, res: Response, next: NextFu
     if (error.message === 'Report not found') {
       return errorResponse(res, 404, error.message);
     }
+    next(error);
+  }
+};
+
+
+export const getMyReports = async (req: AuthRequest, res: Response, next: NextFunction) => {
+  try {
+    const citizenId = req.user?.userId;
+    if (!citizenId) {
+      return errorResponse(res, 401, 'Unauthorized');
+    }
+
+    const reports = await reportRepo.getReportsByCitizenId(citizenId);
+    
+    return successResponse(res, 200, 'My reports fetched successfully', reports);
+  } catch (error) {
     next(error);
   }
 };

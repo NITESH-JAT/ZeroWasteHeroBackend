@@ -1,12 +1,11 @@
 import { Router } from 'express';
-import { createReport, getPendingReports, verifyReport } from './reportController';
+import { createReport, getMyReports, getPendingReports, verifyReport } from './reportController';
 import { requireAuth } from '../../middlewares/authMiddleware';
 import { requireRole } from '../../middlewares/roleMiddleware';
-import { upload } from '../../middlewares/uploadMiddleware'; // <-- Import Multer
+import { upload } from '../../middlewares/uploadMiddleware';
 
 const router = Router();
 
-// Add upload.single('image') to intercept the file before it hits the controller
 router.post(
   '/', 
   requireAuth, 
@@ -16,6 +15,7 @@ router.post(
 );
 
 router.get('/pending', requireAuth, requireRole(['CHAMPION', 'ADMIN']), getPendingReports);
+router.get('/my-reports', requireAuth, getMyReports);
 router.patch('/:id/verify', requireAuth, requireRole(['CHAMPION', 'ADMIN']), verifyReport);
 
 export default router;

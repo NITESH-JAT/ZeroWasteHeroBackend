@@ -73,3 +73,34 @@ export const acceptBidTransaction = async (bidId: number, listingId: number) => 
     throw error;
   }
 };
+
+export const getMyListingsWithBids = async (citizenId: string) => {
+  const sql = `
+    SELECT 
+      sl.id, 
+      sl.citizen_id AS "citizenId", 
+      sl.title, 
+      sl.description, 
+      sl.image_url AS "imageUrl", 
+      sl.city, 
+      sl.status, 
+      sl.created_at AS "createdAt",
+      COALESCE(
+        json_agg(
+          json_build_object(
+            'id', sb.id,
+            'amount', sb.amount,
+            'status', sb.status
+          )
+        ) FILTER (WHERE sb.id IS NOT NULL), 
+        '[]'
+      ) as bids
+    FROM scrap_listings sl
+    LEFT JOIN scrap_bids sb ON sl.id = sb.listing_id
+    WHERE sl.citizen_id = $1
+    GROUP BY sl.id
+    ORDER BY sl.created_at DESC;
+  `;
+  const result = await query(sql, [citizenId]);
+  return result.rows;
+};

@@ -66,3 +66,23 @@ export const getReportById = async (id: string): Promise<ReportRecord | null> =>
   const result = await query(sql, [id]);
   return result.rows[0] || null;
 };
+
+export const getReportsByCitizenId = async (citizenId: string): Promise<ReportRecord[]> => {
+  const sql = `
+    SELECT 
+      id, 
+      citizen_id AS "citizenId", 
+      description, 
+      image_url AS "imageUrl", 
+      latitude, 
+      longitude, 
+      status, 
+      verified_by AS "verifiedBy", 
+      created_at AS "createdAt"
+    FROM reports
+    WHERE citizen_id = $1
+    ORDER BY created_at DESC
+  `;
+  const result = await query(sql, [citizenId]);
+  return result.rows;
+};
