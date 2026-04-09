@@ -28,46 +28,43 @@ export const getActiveCampaigns = async (userLat?: number, userLng?: number) => 
   let sql = '';
   const values: any[] = [];
 
-  if (userLat !== undefined && userLng !== undefined) {
-    // Geospatial Query: Calculates distance in Kilometers and sorts by closest!
-    sql = `
-      SELECT 
-        c.id, 
-        c.title, 
-        c.date, 
-        c.latitude, 
-        c.longitude,
-        c.points, 
-        c.image_url AS "image", 
-        c.attendees,
-        c.tags,
-        u.first_name AS "ngo",
-        ROUND(
-          (6371 * acos(cos(radians($1)) * cos(radians(c.latitude)) * cos(radians(c.longitude) - radians($2)) + sin(radians($1)) * sin(radians(c.latitude))))::numeric, 
-        1) AS "distanceKm"
-      FROM campaigns c
-      JOIN users u ON c.ngo_id = u.id
-      WHERE c.status = 'ACTIVE'
-      AND c.latitude IS NOT NULL
-      AND c.longitude IS NOT NULL
-      ORDER BY "distanceKm" ASC
-      LIMIT 20;
-    `;
-    values.push(userLat, userLng);
-  } else {
-    sql = `
-      SELECT 
-        c.id, c.title, c.date, c.latitude, c.longitude, c.points, 
-        c.image_url AS "image", c.attendees, c.tags,
-        u.first_name AS "ngo" 
-      FROM campaigns c
-      JOIN users u ON c.ngo_id = u.id
-      WHERE c.status = 'ACTIVE'
-      ORDER BY c.created_at DESC
-      LIMIT 20;
-    `;
-  }
+  try {
+    if (userLat !== undefined && userLng !== undefined) {
+      // Safely casting everything to ::float8 stops Postgres from throwing type errors
+      sql = `
+        SELECT 
+          c.id, c.title, c.date, c.latitude, c.longitude, c.points, 
+          c.image_url AS "image", c.attendees, c.tags, u.first_name AS "ngo",
+          ROUND(
+            (6371 * acos(
+              cos(radians($1::float8)) * cos(radians(c.latitude::float8)) * cos(radians(c.longitude::float8) - radians($2::float8)) + 
+              sin(radians($1::float8)) * sin(radians(c.latitude::float8))
+            ))::numeric, 
+          1) AS "distanceKm"
+        FROM campaigns c
+        JOIN users u ON c.ngo_id = u.id
+        WHERE c.status = 'ACTIVE' AND c.latitude IS NOT NULL AND c.longitude IS NOT NULL
+        ORDER BY "distanceKm" ASC
+        LIMIT 20;
+      `;
+      values.push(userLat, userLng);
+    } else {
+      sql = `
+        SELECT 
+          c.id, c.title, c.date, c.latitude, c.longitude, c.points, 
+          c.image_url AS "image", c.attendees, c.tags, u.first_name AS "ngo" 
+        FROM campaigns c
+        JOIN users u ON c.ngo_id = u.id
+        WHERE c.status = 'ACTIVE'
+        ORDER BY c.created_at DESC
+        LIMIT 20;
+      `;
+    }
 
-  const result = await query(sql, values);
-  return result.rows;
+    const result = await query(sql, values);
+    return result.rows;
+  } catch (error) {
+    console.error("Database Campaign Error:", error);
+    return []; // Return an empty array instead of 500ing the server
+  }
 };

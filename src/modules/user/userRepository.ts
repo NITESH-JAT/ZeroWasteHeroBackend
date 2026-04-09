@@ -13,14 +13,18 @@ export const getTopUsersByPoints = async (limit: number = 100) => {
 };
 
 export const getUserStats = async (citizenId: string) => {
-  // 1. Count how many of their reports have been verified
-  const reportRes = await query(`SELECT COUNT(*) FROM reports WHERE citizen_id = $1 AND status = 'verified'`, [citizenId]);
-  
-  // 2. Count how many of their scrap listings have been successfully sold (ACCEPTED)
-  const bidRes = await query(`SELECT COUNT(*) FROM scrap_listings WHERE citizen_id = $1 AND status = 'ACCEPTED'`, [citizenId]);
-  
-  return {
-    verifiedReports: parseInt(reportRes.rows[0].count, 10),
-    campaignsJoined: parseInt(bidRes.rows[0].count, 10) // We are mapping this to "Items Sold" in the UI
-  };
+  try {
+    // Using LOWER() ensures it counts regardless of if you saved it as 'VERIFIED', 'verified', or 'Verified'
+    const reportRes = await query(`SELECT COUNT(*) FROM reports WHERE citizen_id = $1 AND LOWER(status) = 'verified'`, [citizenId]);
+    const bidRes = await query(`SELECT COUNT(*) FROM scrap_listings WHERE citizen_id = $1 AND LOWER(status) = 'accepted'`, [citizenId]);
+    
+    return {
+      verifiedReports: parseInt(reportRes.rows[0]?.count || '0', 10),
+      campaignsJoined: parseInt(bidRes.rows[0]?.count || '0', 10)
+    };
+  } catch (error) {
+    console.error("Database Stats Error:", error);
+    // If the DB query fails, gracefully return 0 instead of crashing the server
+    return { verifiedReports: 0, campaignsJoined: 0 };
+  }
 };
