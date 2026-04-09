@@ -2,6 +2,7 @@ import { Response, NextFunction } from 'express';
 import * as campaignService from './campaignService';
 import { successResponse, errorResponse } from '../../utils/apiResponse';
 import { AuthRequest } from '../../types/globalTypes';
+import * as campaignRepo from './campaignRepository';
 
 export const createCampaign = async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
@@ -27,8 +28,13 @@ export const createCampaign = async (req: AuthRequest, res: Response, next: Next
 
 export const getCampaigns = async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
-    const campaigns = await campaignService.fetchActiveCampaigns();
-    return successResponse(res, 200, 'Active campaigns fetched successfully', campaigns);
+    // Grab GPS coordinates from the query parameters
+    const lat = req.query.lat ? parseFloat(req.query.lat as string) : undefined;
+    const lng = req.query.lng ? parseFloat(req.query.lng as string) : undefined;
+
+    const campaigns = await campaignRepo.getActiveCampaigns(lat, lng);
+    
+    return successResponse(res, 200, 'Campaigns fetched successfully', campaigns);
   } catch (error) {
     next(error);
   }
