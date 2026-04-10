@@ -12,19 +12,29 @@ export const getTopUsersByPoints = async (limit: number = 100) => {
   return result.rows;
 };
 
-export const getUserStats = async (citizenId: string) => {
+export const getUserStats = async (userId: string, role: string) => {
   try {
-    // Using LOWER() ensures it counts regardless of if you saved it as 'VERIFIED', 'verified', or 'Verified'
-    const reportRes = await query(`SELECT COUNT(*) FROM reports WHERE citizen_id = $1 AND LOWER(status) = 'verified'`, [citizenId]);
-    const bidRes = await query(`SELECT COUNT(*) FROM scrap_listings WHERE citizen_id = $1 AND LOWER(status) = 'accepted'`, [citizenId]);
-    
-    return {
-      verifiedReports: parseInt(reportRes.rows[0]?.count || '0', 10),
-      campaignsJoined: parseInt(bidRes.rows[0]?.count || '0', 10)
-    };
+    if (role === 'CITIZEN') {
+      const reportRes = await query(`SELECT COUNT(*) FROM reports WHERE citizen_id = $1 AND LOWER(status) = 'verified'`, [userId]);
+      const bidRes = await query(`SELECT COUNT(*) FROM scrap_listings WHERE citizen_id = $1 AND LOWER(status) = 'accepted'`, [userId]);
+      return {
+        verifiedReports: parseInt(reportRes.rows[0]?.count || '0', 10),
+        campaignsJoined: parseInt(bidRes.rows[0]?.count || '0', 10)
+      };
+    } else if (role === 'SCRAPPER') {
+      // Calculate Scrapper Stats!
+      const spentRes = await query(`SELECT SUM(amount) FROM scrap_bids WHERE scrapper_id = $1 AND LOWER(status) = 'accepted'`, [userId]);
+      const bidsRes = await query(`SELECT COUNT(*) FROM scrap_bids WHERE scrapper_id = $1`, [userId]);
+      const pickupsRes = await query(`SELECT COUNT(*) FROM scrap_bids WHERE scrapper_id = $1 AND LOWER(status) = 'accepted'`, [userId]);
+      return {
+        totalSpent: parseFloat(spentRes.rows[0]?.sum || '0'),
+        bidsPlaced: parseInt(bidsRes.rows[0]?.count || '0', 10),
+        pickupsCompleted: parseInt(pickupsRes.rows[0]?.count || '0', 10)
+      };
+    }
+    return {};
   } catch (error) {
     console.error("Database Stats Error:", error);
-    // If the DB query fails, gracefully return 0 instead of crashing the server
-    return { verifiedReports: 0, campaignsJoined: 0 };
+    return { verifiedReports: 0, campaignsJoined: 0, totalSpent: 0, bidsPlaced: 0, pickupsCompleted: 0 };
   }
 };

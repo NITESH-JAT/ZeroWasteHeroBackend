@@ -109,3 +109,17 @@ export const getMyListings = async (req: AuthRequest, res: Response, next: NextF
     next(error);
   }
 };
+
+
+// SCRAPPER VIEWS THEIR OWN BIDS
+export const getMyBids = async (req: AuthRequest, res: Response, next: NextFunction) => {
+  try {
+    const scrapperId = req.user?.userId;
+    if (!scrapperId) return errorResponse(res, 401, 'Unauthorized');
+
+    const bids = await scrapRepo.getBidsByScrapper(scrapperId);
+    return successResponse(res, 200, 'My bids fetched successfully', bids);
+  } catch (error) {
+    next(error);
+  }
+};

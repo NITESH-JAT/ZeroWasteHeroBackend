@@ -15,5 +15,6 @@ router.patch('/bids/:bidId/accept', requireAuth, requireRole(['CITIZEN']), scrap
 // SCRAPPER ROUTES
 router.get('/feed', requireAuth, requireRole(['SCRAPPER']), scrapController.getMarketplaceFeed);
 router.post('/listings/:id/bids', requireAuth, requireRole(['SCRAPPER']), scrapController.submitBid);
+router.get('/my-bids', requireAuth, scrapController.getMyBids);
 
 export default router;

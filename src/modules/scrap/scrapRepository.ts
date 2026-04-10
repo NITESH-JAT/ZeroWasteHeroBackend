@@ -104,3 +104,18 @@ export const getMyListingsWithBids = async (citizenId: string) => {
   const result = await query(sql, [citizenId]);
   return result.rows;
 };
+
+
+export const getBidsByScrapper = async (scrapperId: string) => {
+  const sql = `
+    SELECT 
+      sb.id, sb.amount, sb.proposed_time AS "proposedTime", sb.status, 
+      sl.title AS "listingTitle", sl.image_url AS "listingImage"
+    FROM scrap_bids sb
+    JOIN scrap_listings sl ON sb.listing_id = sl.id
+    WHERE sb.scrapper_id = $1
+    ORDER BY sb.created_at DESC;
+  `;
+  const result = await query(sql, [scrapperId]);
+  return result.rows;
+};

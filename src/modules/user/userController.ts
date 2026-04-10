@@ -15,12 +15,11 @@ export const getLeaderboard = async (req: AuthRequest, res: Response, next: Next
 
 export const getMyStats = async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
-    const citizenId = req.user?.userId;
-    if (!citizenId) {
-      return errorResponse(res, 401, 'Unauthorized');
-    }
+    const userId = req.user?.userId;
+    const role = req.user?.role; // Ensure your auth middleware attaches the role!
+    if (!userId || !role) return errorResponse(res, 401, 'Unauthorized');
 
-    const stats = await userRepo.getUserStats(citizenId);
+    const stats = await userRepo.getUserStats(userId, role);
     return successResponse(res, 200, 'User stats fetched successfully', stats);
   } catch (error) {
     next(error);
