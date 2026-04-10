@@ -104,3 +104,4 @@ CREATE TABLE scrap_bids (
 ALTER TABLE users ADD COLUMN gov_id_url VARCHAR(255);
 ALTER TYPE user_role ADD VALUE 'SCRAPPER';
 ALTER TABLE scrap_listings ADD COLUMN city VARCHAR(100) NOT NULL DEFAULT 'Unknown';
+CREATE TABLE penalties (id SERIAL PRIMARY KEY, user_id UUID, amount NUMERIC, reason TEXT, created_at TIMESTAMP DEFAULT NOW());

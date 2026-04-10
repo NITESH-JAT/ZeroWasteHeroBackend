@@ -9,6 +9,7 @@ import userRoutes from '../modules/user/userRoutes';
 import analyticsRoutes from '../modules/analytics/analyticsRoutes';
 import scrapRoutes from '../modules/scrap/scrapRoutes';
 import championRoutes from '../modules/champion/championRoutes';
+import authorityRoutes from '../modules/authority/authorityRoutes';
 
 const router = Router();
 
@@ -24,4 +25,5 @@ router.use('/api/v1/users', userRoutes);
 router.use('/api/v1/analytics', analyticsRoutes);
 router.use('/api/v1/scrap', scrapRoutes);
 router.use('/api/v1/champion', championRoutes);
+router.use('/api/v1/authority', authorityRoutes);
 export default router;
