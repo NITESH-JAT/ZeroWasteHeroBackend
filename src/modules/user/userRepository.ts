@@ -1,14 +1,22 @@
 //src/modules/user/userRepository.ts
 import { query } from '../../config/db';
 
-export const getTopUsersByPoints = async (limit: number = 100) => {
+export const getTopUsersByPoints = async () => {
   const sql = `
-    SELECT id, first_name AS "firstName", last_name AS "lastName", role, green_points AS "greenPoints", current_streak AS "currentStreak"
+    SELECT 
+      id, 
+      first_name AS "firstName", 
+      last_name AS "lastName", 
+      role, 
+      green_points AS "greenPoints", 
+      current_streak AS "currentStreak"
     FROM users
     WHERE role = 'CITIZEN' 
     ORDER BY green_points DESC
   `;
-  const result = await query(sql, [limit]);
+  
+
+  const result = await query(sql); 
   return result.rows;
 };
 

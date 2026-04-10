@@ -7,8 +7,9 @@ import { AuthRequest } from '../../types/globalTypes';
 
 export const getLeaderboard = async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
-    const leaderboard = await userService.fetchLeaderboard();
-    return successResponse(res, 200, 'Global Leaderboard fetched successfully', leaderboard);
+
+    const users = await userRepo.getTopUsersByPoints();
+    return successResponse(res, 200, 'Leaderboard fetched successfully', users);
   } catch (error) {
     next(error);
   }
