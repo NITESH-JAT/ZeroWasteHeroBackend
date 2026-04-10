@@ -1,3 +1,4 @@
+//src/routes/index.ts
 import { Router, Request, Response } from 'express';
 import { successResponse } from '../utils/apiResponse';
 import authRoutes from '../modules/auth/authRoutes';
@@ -7,6 +8,7 @@ import taskRoutes from '../modules/task/taskRoutes';
 import userRoutes from '../modules/user/userRoutes';
 import analyticsRoutes from '../modules/analytics/analyticsRoutes';
 import scrapRoutes from '../modules/scrap/scrapRoutes';
+import championRoutes from '../modules/champion/championRoutes';
 
 const router = Router();
 
@@ -21,4 +23,5 @@ router.use('/api/v1/tasks', taskRoutes);
 router.use('/api/v1/users', userRoutes);
 router.use('/api/v1/analytics', analyticsRoutes);
 router.use('/api/v1/scrap', scrapRoutes);
+router.use('/api/v1/champion', championRoutes);
 export default router;

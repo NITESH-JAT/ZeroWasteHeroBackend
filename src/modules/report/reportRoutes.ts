@@ -1,3 +1,4 @@
+//src/modules/report/reportRoutes.ts
 import { Router } from 'express';
 import { createReport, getMyReports, getPendingReports, verifyReport } from './reportController';
 import { requireAuth } from '../../middlewares/authMiddleware';

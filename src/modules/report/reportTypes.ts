@@ -1,3 +1,4 @@
+//src/modules/report/reportTypes.ts
 export interface CreateReportPayload {
   description?: string;
   imageUrl: string;

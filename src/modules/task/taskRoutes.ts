@@ -1,3 +1,4 @@
+//src/modules/task/taskRoutes.ts
 import { Router } from 'express';
 import { createTask, getOpenTasks, claimTask, completeTask, verifyTask } from './taskController';
 import { requireAuth } from '../../middlewares/authMiddleware';

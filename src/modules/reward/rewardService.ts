@@ -1,3 +1,4 @@
+//src/modules/reward/rewardService.ts
 import * as rewardRepo from './rewardRepository';
 
 export const rewardUser = async (userId: string, points: number, reason: string) => {

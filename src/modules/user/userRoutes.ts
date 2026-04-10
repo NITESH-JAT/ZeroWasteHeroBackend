@@ -1,3 +1,4 @@
+//src/modules/user/userRoutes.ts
 import { Router } from 'express';
 import { getLeaderboard, getMyStats } from './userController';
 import { requireAuth } from '../../middlewares/authMiddleware';

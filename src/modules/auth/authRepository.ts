@@ -1,3 +1,4 @@
+//src/modules/auth/authRepository.ts
 import { query } from '../../config/db';
 import { RegisterData, UserRecord } from './authTypes';
 

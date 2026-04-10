@@ -1,3 +1,4 @@
+//src/modules/user/userController.ts
 import { Response, NextFunction } from 'express';
 import * as userService from './userService';
 import * as userRepo from './userRepository'; // <-- Added to call the new stats function

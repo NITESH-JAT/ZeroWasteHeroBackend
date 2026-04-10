@@ -10,7 +10,7 @@ export const register = async (req: Request, res: Response, next: NextFunction) 
     const govIdBuffer = req.file?.buffer;
 
     // SECURITY LOCKDOWN: Define exactly which roles can be created publicly
-    const allowedPublicRoles = ['CITIZEN', 'NGO', 'WORKER', 'CHAMPION', 'ADMIN', 'SCRAPPER'];
+    const allowedPublicRoles = ['CITIZEN', 'NGO', 'WORKER', 'SCRAPPER'];
     
     // If they try to pass garbage text, we force them to be a CITIZEN
     let safeRole = 'CITIZEN';

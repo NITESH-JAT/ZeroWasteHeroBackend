@@ -1,3 +1,4 @@
+//src/modules/auth/authService.ts
 import bcrypt from 'bcryptjs';
 import jwt, { SignOptions } from 'jsonwebtoken';
 import * as authRepo from './authRepository';

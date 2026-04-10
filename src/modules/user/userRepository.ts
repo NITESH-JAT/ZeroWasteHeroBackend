@@ -1,3 +1,4 @@
+//src/modules/user/userRepository.ts
 import { query } from '../../config/db';
 
 export const getTopUsersByPoints = async (limit: number = 100) => {

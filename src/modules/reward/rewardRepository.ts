@@ -1,3 +1,4 @@
+//src/modules/reward/rewardRepository.ts
 import { dbPool } from '../../config/db';
 
 export const grantPoints = async (userId: string, points: number, reason: string): Promise<number> => {
