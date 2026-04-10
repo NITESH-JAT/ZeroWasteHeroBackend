@@ -1,8 +1,10 @@
 //src/modules/task/taskController.ts
 import { Response, NextFunction } from 'express';
 import * as taskService from './taskService';
+import * as taskRepo from './taskRepository';
 import { successResponse, errorResponse } from '../../utils/apiResponse';
 import { AuthRequest } from '../../types/globalTypes';
+
 
 export const createTask = async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
@@ -74,6 +76,17 @@ export const verifyTask = async (req: AuthRequest, res: Response, next: NextFunc
     const task = await taskService.approveCompletedTask(id, championId);
     return successResponse(res, 200, `Task verified! Worker rewarded with ${task.rewardPoints} points.`, task);
   } catch (error: any) {
+    next(error);
+  }
+};
+
+
+export const getMyTasks = async (req: AuthRequest, res: Response, next: NextFunction) => {
+  try {
+    const workerId = req.user!.userId;
+    const tasks = await taskRepo.getTasksByWorker(workerId);
+    return successResponse(res, 200, 'My tasks fetched successfully', tasks);
+  } catch (error) {
     next(error);
   }
 };

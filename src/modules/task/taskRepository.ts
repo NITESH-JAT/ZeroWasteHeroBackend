@@ -78,3 +78,18 @@ export const verifyTaskCompletion = async (taskId: string, championId: string): 
   const result = await query(sql, [championId, taskId]);
   return result.rows[0] || null;
 };
+
+export const getTasksByWorker = async (workerId: string) => {
+  const sql = `
+    SELECT 
+      t.id, t.report_id AS "reportId", t.status, t.reward_points AS "rewardPoints", 
+      t.created_at AS "createdAt",
+      r.description, r.image_url AS "reportImageUrl", r.latitude, r.longitude
+    FROM tasks t
+    LEFT JOIN reports r ON t.report_id = r.id
+    WHERE t.worker_id = $1
+    ORDER BY t.created_at DESC
+  `;
+  const result = await query(sql, [workerId]);
+  return result.rows;
+};
