@@ -7,7 +7,6 @@ export const getTopUsersByPoints = async (limit: number = 100) => {
     FROM users
     WHERE role = 'CITIZEN' 
     ORDER BY green_points DESC
-    LIMIT $1
   `;
   const result = await query(sql, [limit]);
   return result.rows;

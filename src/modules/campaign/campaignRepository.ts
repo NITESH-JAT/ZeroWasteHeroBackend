@@ -44,8 +44,7 @@ export const getActiveCampaigns = async (userLat?: number, userLng?: number) => 
         FROM campaigns c
         JOIN users u ON c.ngo_id = u.id
         WHERE c.status = 'ACTIVE' AND c.latitude IS NOT NULL AND c.longitude IS NOT NULL
-        ORDER BY "distanceKm" ASC
-        LIMIT 20;
+        ORDER BY "distanceKm" ASC;
       `;
       values.push(userLat, userLng);
     } else {

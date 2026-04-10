@@ -12,5 +12,6 @@ router.get('/stats', authController.getDashboardStats);
 router.get('/ngos', authController.getNgos);
 router.get('/penalties', authController.getPenaltiesList);
 router.post('/penalties', authController.createPenalty);
+router.get('/users', authController.getUsersList);
 
 export default router;

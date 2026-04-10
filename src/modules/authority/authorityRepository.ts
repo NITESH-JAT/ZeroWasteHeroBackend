@@ -50,3 +50,13 @@ export const getPenalties = async () => {
   const result = await query(sql);
   return result.rows;
 };
+
+export const getAllUsers = async () => {
+  const sql = `
+    SELECT id, first_name AS "firstName", last_name AS "lastName", role, email 
+    FROM users 
+    ORDER BY first_name ASC
+  `;
+  const result = await query(sql);
+  return result.rows;
+};

@@ -43,3 +43,12 @@ export const createPenalty = async (req: AuthRequest, res: Response, next: NextF
     next(error);
   }
 };
+
+export const getUsersList = async (req: AuthRequest, res: Response, next: NextFunction) => {
+  try {
+    const users = await authRepo.getAllUsers();
+    return successResponse(res, 200, 'Users fetched successfully', users);
+  } catch (error) {
+    next(error);
+  }
+};
